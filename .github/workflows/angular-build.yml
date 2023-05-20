@@ -35,7 +35,7 @@ jobs:
       - name: Build
         run: npm run build.github
   deploy:
-    needs: build-and-deploy
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
