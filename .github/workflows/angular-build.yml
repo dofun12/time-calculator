@@ -34,6 +34,9 @@ jobs:
 
       - name: Build
         run: npm run build.github
+
+      - name: List files
+        run: ls
   deploy:
     needs: build
     environment:
