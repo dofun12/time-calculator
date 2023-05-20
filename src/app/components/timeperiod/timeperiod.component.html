@@ -1,0 +1,13 @@
+<div *ngFor="let time of timelist">
+  <span [innerText]="time.text"></span>
+</div>
+<input type="datetime-local" [(ngModel)]="selectedTime">
+<button (click)="addTime()" >Add Time</button>
+<p class="error-message">
+  {{errorMessage}}
+</p>
+<p>
+  {{totalDiffTime}}
+</p>
+
+
