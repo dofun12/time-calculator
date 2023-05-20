@@ -26,8 +26,15 @@ export class TimeperiodComponent {
   }
 
   generateDiff() {
-
-
+      let total = 0;
+      for(let time of this.timelist){
+        total = total+time.diffSeconds;
+      }
+      const duration = moment.duration(total, 'seconds');
+      if(duration.get('days') > 0) {
+        this.totalDiffTime =  `${duration.get('days')}d ${duration.get('hours')}h ${duration.get('minutes')}m ${duration.get('seconds')}s`;
+      }
+      return this.totalDiffTime =  `${duration.get('hours')}h ${duration.get('minutes')}m ${duration.get('seconds')}s`;
   }
 
   deleteTimePeriod(id:number){
