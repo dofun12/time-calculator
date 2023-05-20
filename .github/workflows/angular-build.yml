@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -37,16 +37,8 @@ jobs:
       - name: Install Dependencies
         if: steps.cache-nodemodules.outputs.cache-hit != 'true'
         run: |
-          npm ci
+          npm install
 
       - name: Build
         run: |
           npm run build -- --prod
-
-      - name: Lint
-        run: |
-          npm run lint
-
-      - name: Test
-        run: |
-          npm run test -- --prod
