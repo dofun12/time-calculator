@@ -1,9 +1,9 @@
 <div class="container">
   <div class="row mt-1 mb-1">
-    <h1 class="col-12">Time period calculator</h1>
+    <h1 class="col-12 text-center">TIME CALCULATOR - PERIOD</h1>
   </div>
   <div class="mt-3 row g-3">
-    <label for="date-input" class="col-auto col-form-label">Date</label>
+    <label for="date-input" class="col-auto col-form-label">ADD DATE</label>
     <div class="col align-items-center">
       <input class="form-control" id="date-input" type="datetime-local" [(ngModel)]="selectedTime">
     </div>
@@ -23,12 +23,17 @@
   <div class="row">
     <div class="col-12 times-list">
       <div *ngFor="let time of timelist" class="row times-list-item">
-        <div class="col-6">
-          <span [innerText]="time.timeStart.text"></span> - <span [innerText]="time.timeEnd.text"></span>
+        <div class="col-12 col-sm-6">
+          <div class="col-12">
+            <span [innerText]="time.timeStart.text"></span>
+          </div>
+          <div class="col-12">
+            <span [innerText]="time.timeEnd.text"></span>
+          </div>
         </div>
-        <div class="col-6 text-end">
+        <div class="col-12 col-sm-6 text-end">
           <span class="me-2" [innerText]="time.getDurationText"></span>
-          <div (click)="deleteTimePeriod(time.id)" class="btn btn-primary float-end">Remove</div>
+          <div (click)="deleteTimePeriod(time.id)" class="btn btn-danger float-end">❌</div>
         </div>
       </div>
     </div>

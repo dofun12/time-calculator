@@ -41,6 +41,9 @@ jobs:
       - name: List files
         run: ls
 
+      - name: Copy Index
+        run: cp dist/time-calculator/index.html dist/time-calculator/404.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
 

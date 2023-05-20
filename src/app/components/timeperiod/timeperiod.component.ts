@@ -26,8 +26,15 @@ export class TimeperiodComponent {
   }
 
   generateDiff() {
-
-
+      let total = 0;
+      for(let time of this.timelist){
+        total = total+time.diffSeconds;
+      }
+      const duration = moment.duration(total, 'seconds');
+      if(duration.get('days') > 0) {
+        this.totalDiffTime =  `${duration.get('days')}d ${duration.get('hours')}h ${duration.get('minutes')}m ${duration.get('seconds')}s`;
+      }
+      return this.totalDiffTime =  `${duration.get('hours')}h ${duration.get('minutes')}m ${duration.get('seconds')}s`;
   }
 
   deleteTimePeriod(id:number){
@@ -39,12 +46,13 @@ export class TimeperiodComponent {
       tmpArray.push(list);
     }
     this.timelist = tmpArray;
+    this.generateDiff();
   }
   private addTimePeriodItem(timePeriodItem: TimePeriodItem){
     if(this.timelist.length == 0){
         const timePeriod = new TimePeriod(this.index++,timePeriodItem, new TimePeriodItem('',0), moment.duration(0,'seconds'))
         this.timelist.push(timePeriod);
-        console.log(this.timelist);
+        this.generateDiff();
         return;
     }
     const last = this.timelist.length-1;
@@ -53,14 +61,14 @@ export class TimeperiodComponent {
     if(lastItem.timeEnd.unixtime > 0){
       const timePeriod = new TimePeriod(this.index++,timePeriodItem, new TimePeriodItem('',0), moment.duration(0,'seconds'))
       this.timelist.push(timePeriod);
-      console.log(this.timelist);
+      this.generateDiff();
       return;
     }
 
     const momentFirst = moment.unix(lastItem.timeStart.unixtime);
 
     if (!this.canAdd(momentFirst, timePeriodItem.unixtime)) {
-      this.errorMessage = 'A data deve ser maior que ultima data adicionada';
+      this.errorMessage = 'Selected date must be greater than previously added!';
       setTimeout(() => {                           // <<<---using ()=> syntax
         this.errorMessage = '';
       }, 3000);
