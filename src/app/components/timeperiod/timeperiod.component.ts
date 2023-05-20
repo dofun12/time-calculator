@@ -1,10 +1,11 @@
 import {Component} from '@angular/core';
 import * as moment from "moment";
-import {TimeItem} from "../../dto/time-item";
+import {TimePeriodItem} from "../../dto/time-period-item";
 import {interval, timeout} from "rxjs";
+import {TimePeriod} from "../../dto/time-period";
 
 const defaultFormat = 'YYYY-MM-DDTHH:mm';
-
+const listFormat = 'DD/MM/YYYY HH:mm:ss';
 
 @Component({
   selector: 'app-timeperiod',
@@ -13,44 +14,63 @@ const defaultFormat = 'YYYY-MM-DDTHH:mm';
 })
 export class TimeperiodComponent {
   time = ''
-  timelist: TimeItem[] = [];
+  timelist: TimePeriod[] = [];
   errorMessage = '';
   selectedTime = moment().format(defaultFormat);
   totalDiffTime = '0h';
+  index = 0;
 
-  canAdd(selectedMoment: moment.Moment) {
-    const lastItem = this.timelist[this.timelist.length - 1];
-    if (!lastItem) {
-      return true;
-    }
-    return selectedMoment.unix() - lastItem.unixtime > 0;
-
+  canAdd(startMoment: moment.Moment, endMomentUnix: number) {
+    const resp = endMomentUnix - startMoment.unix();
+    return resp > 0;
   }
 
   generateDiff() {
-    let first = undefined;
-    let second = undefined;
-    let total = 0;
-    for (let time of this.timelist) {
-      if (!first) {
-        first = time;
+
+
+  }
+
+  deleteTimePeriod(id:number){
+    let tmpArray: TimePeriod[] = [];
+    for(let list of this.timelist){
+      if(id == list.id){
         continue;
       }
-      const momentFirst = moment.unix(first.unixtime);
-      const momentSecond = moment.unix(time.unixtime);
-      total = total+ (momentSecond.diff(momentFirst, 'seconds'));
-
-      first = undefined;
-      second = undefined;
-
-
+      tmpArray.push(list);
     }
-    let duration = moment.duration(total, 'seconds');
-    if(duration.get('days') > 0) {
-      this.totalDiffTime = `${duration.get('days')}d ${duration.get('hours')}h ${duration.get('minutes')}m ${duration.get('seconds')}s`;
+    this.timelist = tmpArray;
+  }
+  private addTimePeriodItem(timePeriodItem: TimePeriodItem){
+    if(this.timelist.length == 0){
+        const timePeriod = new TimePeriod(this.index++,timePeriodItem, new TimePeriodItem('',0), moment.duration(0,'seconds'))
+        this.timelist.push(timePeriod);
+        console.log(this.timelist);
+        return;
+    }
+    const last = this.timelist.length-1;
+    let lastItem = this.timelist[last];
+
+    if(lastItem.timeEnd.unixtime > 0){
+      const timePeriod = new TimePeriod(this.index++,timePeriodItem, new TimePeriodItem('',0), moment.duration(0,'seconds'))
+      this.timelist.push(timePeriod);
+      console.log(this.timelist);
       return;
     }
-    this.totalDiffTime = `${duration.get('hours')}h ${duration.get('minutes')}m ${duration.get('seconds')}s`;
+
+    const momentFirst = moment.unix(lastItem.timeStart.unixtime);
+
+    if (!this.canAdd(momentFirst, timePeriodItem.unixtime)) {
+      this.errorMessage = 'A data deve ser maior que ultima data adicionada';
+      setTimeout(() => {                           // <<<---using ()=> syntax
+        this.errorMessage = '';
+      }, 3000);
+      return;
+    }
+    lastItem.timeEnd = timePeriodItem;
+
+    const momentSecond = moment.unix(lastItem.timeEnd.unixtime);
+    lastItem.diffSeconds = momentSecond.diff(momentFirst, 'seconds');
+    lastItem.duration = moment.duration(lastItem.diffSeconds, 'seconds');
   }
 
   addTime(unixtime?: number) {
@@ -58,21 +78,16 @@ export class TimeperiodComponent {
     let selectedMoment = moment();
     if (unixtime) {
       selectedMoment = moment.unix(unixtime);
-      this.timelist.push(new TimeItem(selectedMoment.format('LL LT'), selectedMoment.unix()));
+      this.addTimePeriodItem(new TimePeriodItem(selectedMoment.format(listFormat), selectedMoment.unix()));
+      console.log(this.timelist);
       this.generateDiff();
       return;
     }
 
 
     selectedMoment = moment(this.selectedTime, defaultFormat);
-    if (!this.canAdd(selectedMoment)) {
-      this.errorMessage = 'A data deve ser maior que ultima data adicionada';
-      setTimeout(() => {                           // <<<---using ()=> syntax
-        this.errorMessage = '';
-      }, 3000);
-      return;
-    }
-    this.timelist.push(new TimeItem(selectedMoment.format('LL LT'), selectedMoment.unix()));
+
+    this.addTimePeriodItem(new TimePeriodItem(selectedMoment.format(listFormat), selectedMoment.unix()));
     this.generateDiff();
   }
 

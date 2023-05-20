@@ -1,13 +1,40 @@
-<div *ngFor="let time of timelist">
-  <span [innerText]="time.text"></span>
+<div class="container">
+  <div class="row mt-1 mb-1">
+    <h1 class="col-12">Time period calculator</h1>
+  </div>
+  <div class="mt-3 row g-3">
+    <label for="date-input" class="col-auto col-form-label">Date</label>
+    <div class="col align-items-center">
+      <input class="form-control" id="date-input" type="datetime-local" [(ngModel)]="selectedTime">
+    </div>
+    <div class="col-auto">
+      <button (click)="addTime()" class="btn btn-primary mb-3">+</button>
+    </div>
+  </div>
+  <div class="row">
+    <p class="col-12 error-message">
+      {{errorMessage}}
+    </p>
+  </div>
+  <div class="row">
+    <h2 class="col-8">Periods:</h2>
+    <h2 class="col-4 text-end">{{totalDiffTime}}</h2>
+  </div>
+  <div class="row">
+    <div class="col-12 times-list">
+      <div *ngFor="let time of timelist" class="row times-list-item">
+        <div class="col-6">
+          <span [innerText]="time.timeStart.text"></span> - <span [innerText]="time.timeEnd.text"></span>
+        </div>
+        <div class="col-6 text-end">
+          <span class="me-2" [innerText]="time.getDurationText"></span>
+          <div (click)="deleteTimePeriod(time.id)" class="btn btn-primary float-end">Remove</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 </div>
-<input type="datetime-local" [(ngModel)]="selectedTime">
-<button (click)="addTime()" >Add Time</button>
-<p class="error-message">
-  {{errorMessage}}
-</p>
-<p>
-  {{totalDiffTime}}
-</p>
 
 
