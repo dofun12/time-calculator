@@ -1,3 +1,14 @@
 .error-message{
   color: red;
 }
+label, input, button{
+  font-size: 1.2em;
+}
+.times-list-item{
+  border-bottom: 1px solid #eee;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  span{
+    font-size: 1.3em;
+  }
+}
